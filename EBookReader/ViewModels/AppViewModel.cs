@@ -2,87 +2,122 @@
 using EBookReader.Helpers;
 using EBookReader.Models;
 using EBookReader.Services;
+using Syncfusion.Pdf;
 using Syncfusion.Windows.PdfViewer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EBookReader.ViewModels
 {
     public class AppViewModel : BaseViewModel
     {
 
-        //public List<Page> BookPages { get; set; }
+        private string pageNumbers;
 
-        //private string path;
+        public string PageNumbers
+        {
+            get { return pageNumbers; }
+            set { pageNumbers = value; }
+        }
 
-        //public string Path
-        //{
-        //    get { return path; }
-        //    set { path = value; OnPropertyChanged(); }
-        //}
-
-        //private Page currentPage;
-
-        //public Page CurrentPage
-        //{
-        //    get { return currentPage; }
-        //    set { currentPage = value; OnPropertyChanged(); }
-        //}
-
-        //private Page nextPage;
-
-        //public Page NextPage
-        //{
-        //    get { return nextPage; }
-        //    set { nextPage = value; OnPropertyChanged(); }
-        //}
-        //private Image pdfimage;
-
-        //public Image PdfImage
-        //{
-        //    get { return pdfimage; }
-        //    set { pdfimage = value;OnPropertyChanged(); }
-        //}
-
+        public Thread SpeakThread { get; set; }
         public PdfViewerControl BookPdfViewer { get; set; }
-        
+
 
         public int Index { get; set; } = 1;
 
-        public RelayCommand StartSpeakCommand { get; set; }
-        //public RelayCommand GetPdfCommand { get; set; }
-        //public RelayCommand NextPageCommand { get; set; }
+        public RelayCommand StartCurrentPageSpeakCommand { get; set; }
+        public RelayCommand StartSelectedPageSpeakCommand { get; set; }
+        public RelayCommand StartAllPagesSpeakCommand { get; set; }
+        public RelayCommand StopSpeakCommand { get; set; }
+        public RelayCommand PauseSpeakCommand { get; set; }
+        public RelayCommand ResumeSpeakCommand { get; set; }
         public AppViewModel()
         {
-            //GetPdfCommand = new RelayCommand((o) =>
-            //{
-            //    BookPdfViewer.Load(Path);
-                
-            //    //BookPdfViewer.Print();
-                
-            //    CurrentPage = BookPages[0];
-            //   // PdfImage = CurrentPage.Images[0];
-            //    NextPage = BookPages[1];
-            //});
 
-            //NextPageCommand = new RelayCommand((o) =>
-            //{
-            //    CurrentPage = NextPage;
-            //    Index += 1;
-            //    //PdfImage = CurrentPage.Images[0];
-            //    NextPage = BookPages[Index];
-            //});
-
-            StartSpeakCommand = new RelayCommand((o) =>
+            StartCurrentPageSpeakCommand = new RelayCommand((o) =>
             {
-                var pages = BookPdfViewer.LoadedDocument.Pages;
-                var tex =  pages[BookPdfViewer.CurrentPage-1].ExtractText();
-                
-                TextToSpeechService.TextToSpeech(tex);
+                SpeakThread = new Thread(() =>
+                {
+                    var pages = BookPdfViewer.LoadedDocument.Pages;
+                    var tex = pages[BookPdfViewer.CurrentPage - 1].ExtractText();
+                    TextToSpeechService.TextToSpeech(tex);
+                });
+                SpeakThread.Start();
+            });
+
+            StartSelectedPageSpeakCommand = new RelayCommand((o) =>
+            {
+                SpeakThread = new Thread(() =>
+                {
+                    var pagess = PageNumbers.Split(',');
+                    var pages = BookPdfViewer.LoadedDocument.Pages;
+
+                    foreach (var item in pagess)
+                    {
+                        int p = Convert.ToInt32(item);
+                        var tex = pages[p - 1].ExtractText();
+                        TextToSpeechService.TextToSpeech(tex);
+                    }
+                });
+                SpeakThread.Start();
+
+            });
+
+            StartAllPagesSpeakCommand = new RelayCommand((o) =>
+            {
+                SpeakThread = new Thread(() =>
+                {
+                    var pages = BookPdfViewer.LoadedDocument.Pages;
+                    foreach (PdfPageBase item in pages)
+                    {
+                        TextToSpeechService.TextToSpeech(item.ExtractText());
+                    }
+                });
+                SpeakThread.Start();
+            });
+
+            StopSpeakCommand = new RelayCommand((o) =>
+            {
+                try
+                {
+                    SpeakThread.Abort();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            });
+
+            PauseSpeakCommand = new RelayCommand((o) =>
+            {
+                try
+                {
+                    SpeakThread.Suspend();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            });
+
+
+            ResumeSpeakCommand = new RelayCommand((o) =>
+            {
+                try
+                {
+                    SpeakThread.Resume();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             });
 
 

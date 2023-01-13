@@ -6,22 +6,81 @@
         xmlns:local="clr-namespace:EBookReader"
         xmlns:PdfViewer="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF" x:Class="EBookReader.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="800">
-    <StackPanel>
+    WindowStartupLocation="CenterOwner"
+    WindowState="Maximized"
+        Title="MainWindow">
+    <Grid>
 
-       
-
-
-        <PdfViewer:PdfViewerControl Name="MyPdfViewer" />
-
-
-
-
-        <Button
-                Command="{Binding StartSpeakCommand}">
-            Read Page
-        </Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
 
 
-    </StackPanel>
+        <Grid>
+            <PdfViewer:PdfViewerControl Name="MyPdfViewer" />
+        </Grid>
+
+
+
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal">
+
+            <TextBox Width="300"
+                     FontSize="20"
+                       Text="{Binding PageNumbers}"></TextBox>
+            
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding StartSelectedPageSpeakCommand}">
+                Read Selected Pages
+            </Button>
+
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding StartCurrentPageSpeakCommand}">
+                Read Current Page
+            </Button>
+
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding StartAllPagesSpeakCommand}">
+                Read All Pages
+            </Button>
+
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding PauseSpeakCommand}">
+                Pause
+            </Button>
+
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding ResumeSpeakCommand}">
+                Resume
+            </Button>
+
+            <Button
+                FontSize="20"
+                FontWeight="SemiBold"
+                Padding="9,6"
+                Command="{Binding StopSpeakCommand}">
+                Stop
+            </Button>
+
+        </StackPanel>
+
+
+    </Grid>
 </Window>

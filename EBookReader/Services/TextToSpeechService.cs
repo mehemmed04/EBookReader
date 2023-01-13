@@ -14,9 +14,12 @@ namespace EBookReader.Services
     {
         public static void TextToSpeech(string text)
         {
-			SpeechSynthesizer _ss = new SpeechSynthesizer();
-            //_ss.AddLexicon(new Uri("C:\\Users\\Acer\\Desktop\\Blue.pls"), "application/pls+xml");
-            _ss.Speak(text);
-		}
+            if (text != null && text!=string.Empty)
+            {
+                SpeechSynthesizer _ss = new SpeechSynthesizer();
+                //_ss.AddLexicon(new Uri("C:\\Users\\Acer\\Desktop\\Blue.pls"), "application/pls+xml");
+                _ss.Speak(text);
+            }
+        }
     }
 }
