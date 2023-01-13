@@ -23,9 +23,13 @@
 
             <StackPanel>
                 <StackPanel Width="700"
-                            Height="550">
+                            Height="550"
+                            Orientation="Horizontal">
                     <TextBlock Text="{Binding CurrentPage.Content}"
+                               Width="400"
                                TextWrapping="Wrap"></TextBlock>
+                    <Image Width="300"
+                           Source="{Binding PdfImage}"></Image>
                 </StackPanel>
                 <StackPanel Name="imgDay">
                     

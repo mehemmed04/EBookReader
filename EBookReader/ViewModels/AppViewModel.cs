@@ -4,6 +4,7 @@ using EBookReader.Models;
 using EBookReader.Services;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,13 @@ namespace EBookReader.ViewModels
             get { return nextPage; }
             set { nextPage = value; OnPropertyChanged(); }
         }
+        private Image pdfimage;
+
+        public Image PdfImage
+        {
+            get { return pdfimage; }
+            set { pdfimage = value;OnPropertyChanged(); }
+        }
 
         public int Index { get; set; } = 1;
 
@@ -50,6 +58,7 @@ namespace EBookReader.ViewModels
             {
                 BookPages = PDFReader.GetPages(Path);
                 CurrentPage = BookPages[0];
+                PdfImage = CurrentPage.Images[0];
                 NextPage = BookPages[1];
             });
 
@@ -57,6 +66,7 @@ namespace EBookReader.ViewModels
             {
                 CurrentPage = NextPage;
                 Index += 1;
+                PdfImage = CurrentPage.Images[0];
                 NextPage = BookPages[Index];
             });
 
