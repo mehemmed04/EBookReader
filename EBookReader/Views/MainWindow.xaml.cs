@@ -27,6 +27,7 @@ namespace EBookReader
             InitializeComponent();
             
             AppViewModel ap = new AppViewModel();
+            ap.BookPdfViewer = MyPdfViewer;
             DataContext = ap;
         }
     }
