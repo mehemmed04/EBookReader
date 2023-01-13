@@ -1,4 +1,5 @@
-﻿using iTextSharp.text.pdf;
+﻿using EBookReader.Models;
+using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,10 @@ namespace EBookReader.Helpers
 {
     public class PDFReader
     {
-        public static string GetText(string path)
+        public static List<Page> GetPages(string path)
         {
-            StringBuilder sb = new StringBuilder();
+            var pages = new List<Page>();
+            //StringBuilder sb = new StringBuilder();
             using(PdfReader reader = new PdfReader(path))
             {
                 for(int pageNo = 1; pageNo <= reader.NumberOfPages; pageNo++)
@@ -20,10 +22,14 @@ namespace EBookReader.Helpers
                     ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
                     string text = PdfTextExtractor.GetTextFromPage(reader, pageNo,strategy);
                     text = Encoding.UTF8.GetString(ASCIIEncoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(text)));
-                    sb.Append(text);
+                    pages.Add(new Page
+                    {
+                        Content = text,
+                        PageNo = pageNo,
+                    });
                 }
             }
-            return sb.ToString();
+            return pages;
         }
     }
 }
