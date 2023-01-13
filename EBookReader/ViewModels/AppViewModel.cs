@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Speech.Synthesis;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,22 @@ namespace EBookReader.ViewModels
 {
     public class AppViewModel : BaseViewModel
     {
+        private List<InstalledVoice> voices;
+
+        public List<InstalledVoice> Voices
+        {
+            get { return voices; }
+            set { voices = value; }
+        }
+
+        private InstalledVoice selectedVoice;
+
+        public InstalledVoice SelectedVoice
+        {
+            get { return selectedVoice; }
+            set { selectedVoice = value;OnPropertyChanged(); }
+        }
+
 
         private string pageNumbers;
 
@@ -40,9 +57,11 @@ namespace EBookReader.ViewModels
         public RelayCommand ResumeSpeakCommand { get; set; }
         public AppViewModel()
         {
-
+            Voices = TextToSpeechService._ss.GetInstalledVoices().ToList();
+            SelectedVoice = Voices[0];
             StartCurrentPageSpeakCommand = new RelayCommand((o) =>
             {
+                TextToSpeechService.SelecetedVoice = SelectedVoice;
                 SpeakThread = new Thread(() =>
                 {
                     var pages = BookPdfViewer.LoadedDocument.Pages;
@@ -54,6 +73,7 @@ namespace EBookReader.ViewModels
 
             StartSelectedPageSpeakCommand = new RelayCommand((o) =>
             {
+                TextToSpeechService.SelecetedVoice = SelectedVoice;
                 SpeakThread = new Thread(() =>
                 {
                     var pagess = PageNumbers.Split(',');
@@ -72,6 +92,8 @@ namespace EBookReader.ViewModels
 
             StartAllPagesSpeakCommand = new RelayCommand((o) =>
             {
+                TextToSpeechService.SelecetedVoice = SelectedVoice;
+
                 SpeakThread = new Thread(() =>
                 {
                     var pages = BookPdfViewer.LoadedDocument.Pages;
@@ -99,7 +121,7 @@ namespace EBookReader.ViewModels
             {
                 try
                 {
-                    SpeakThread.Suspend();
+                    TextToSpeechService._ss.Pause();
                 }
                 catch (Exception ex)
                 {
@@ -110,9 +132,11 @@ namespace EBookReader.ViewModels
 
             ResumeSpeakCommand = new RelayCommand((o) =>
             {
+                TextToSpeechService.SelecetedVoice = SelectedVoice;
+
                 try
                 {
-                    SpeakThread.Resume();
+                    TextToSpeechService._ss.Resume();
                 }
                 catch (Exception ex)
                 {

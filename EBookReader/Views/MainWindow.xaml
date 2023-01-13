@@ -27,6 +27,14 @@
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal">
 
+            <ComboBox SelectedIndex="0"
+                      Width="250"
+                      ItemsSource="{Binding Voices}"
+                      SelectedItem="{Binding SelectedVoice,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                      DisplayMemberPath = "VoiceInfo.Name" >
+                
+            </ComboBox>
+            
             <TextBox Width="300"
                      FontSize="20"
                        Text="{Binding PageNumbers}"></TextBox>
